@@ -1,8 +1,10 @@
-from collections import defaultdict
+import json
+import math
 from itertools import cycle
+import re
+from json import dumps
 
 import Orange
-import re
 from flask import Flask
 
 app = Flask(__name__)
@@ -10,19 +12,22 @@ app = Flask(__name__)
 datasets_info: dict = dict(Orange.datasets.items())
 
 
-def convert_data(name: str) -> dict[str: dict[str: str | int]]:
+def convert_data(name: str) -> dict[str: dict]:
     """
     :param name: name of dataset file (.tab)
     :return: dict of all elements
     """
     variables = cycle([x.name for x in Orange.data.Table(name).domain.variables])
+    # compare i == i because json doesn't support nan and Math.isnan doesn't work if there is a str
+    # in one line because it is a bit faster
     data_table = {
-        element[-1].value: {next(variables): i for i in element.list[:-1]} for element in Orange.data.Table(name)
+        element[-1].value:
+            {next(variables): i if i == i else None for i in element.list[:-1]} for element in Orange.data.Table(name)
     }
     return data_table
 
 
-print(convert_data('zoo'))
+x = convert_data('brown-selected.tab')
 
 
 @app.route('/datasets-api')
@@ -50,10 +55,6 @@ def datasets_api_info_name(name):
 @app.route('/datasets-api/data/<string:name>')
 def datasets_api_data(name):
     try:
-        if re.search(r'\.(tab|dst)$', name):
-            return convert_data(name)
-
-        file: str = datasets_info[name]['location']
         return convert_data(name)
 
     except KeyError as e:
