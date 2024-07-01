@@ -25,10 +25,7 @@ def convert_data(name: str) -> dict[str: dict]:
     return data_table
 
 
-x = convert_data('brown-selected.tab')
-
-
-@app.route('/datasets-api')
+@app.route('/datasets/get')
 def datasets_api():
     return {'/info': 'returns values for all available datasets',
             '/info/name': 'returns info for this specific dataset',
@@ -36,18 +33,31 @@ def datasets_api():
             }
 
 
-@app.route('/datasets-api/info/')
+@app.route('/datasets/get/info/')
 def datasets_api_info():
     return datasets_info
 
 
-@app.route('/datasets-api/data/<string:name>')
+@app.route('/datasets/get/data/<string:name>')
 def datasets_api_data(name):
     try:
         return convert_data(name)
 
     except KeyError as e:
         return {'KeyError': str(e)}
+
+
+@app.route('/datasets/remove/<dataset_name>', methods=['DELETE'])
+def remove_dataset(dataset_name):
+    # todo: code for removing
+    return {"message": f"Dataset '{dataset_name}' has been deleted successfully."}, 200
+    pass
+
+
+@app.route('/datasets/edit/<dataset_name>', methods=['DELETE'])
+def edit_dataset(dataset_name):
+    # todo: code for changing
+    pass
 
 
 if __name__ == '__main__':
