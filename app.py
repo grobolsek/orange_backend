@@ -39,15 +39,6 @@ def datasets_api_info():
     return datasets_info
 
 
-@app.route('/datasets-api/info/<string:name>')
-def datasets_api_info_name(name):
-    try:
-        return datasets_info[name]
-
-    except KeyError as e:
-        return {'KeyError': str(e)}
-
-
 @app.route('/datasets-api/data/<string:name>')
 def datasets_api_data(name):
     try:
