@@ -1,8 +1,4 @@
-import json
-import math
 from itertools import cycle
-import re
-from json import dumps
 
 import Orange
 from flask import Flask
