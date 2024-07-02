@@ -18,7 +18,7 @@ def convert_data(name: str) -> dict[str: dict]:
     """
     variables = cycle([x.name for x in Orange.data.Table(name).domain.variables])
     # compare i == i because json doesn't support nan and Math.isnan doesn't work if there is a str
-    # in one line because it is a bit faster
+    # todo: fix (breaks on heart_disease)
     data_table = {
         element[-1].value:
             {next(variables): i if i == i else None for i in element.list[:-1]} for element in Orange.data.Table(name)
