@@ -1,4 +1,5 @@
 from itertools import cycle
+from collections import defaultdict
 
 import Orange
 from flask import Flask
@@ -25,6 +26,24 @@ def convert_data(name: str) -> dict[str: dict]:
     return data_table
 
 
+def get_values(keys: list) -> dict[str: list]:
+    """
+    :param keys: list of keys
+    :return: values of keys
+    """
+    values = defaultdict(set)
+    for i in datasets_info.values():
+        for key, value in i.items():
+            if type(value) is dict:
+                for k, v in value.items():
+                    if k in keys:
+                        values[k].add(v)
+            elif key in keys:
+                values[key].add(value)
+
+    return {key: list(value) for key, value in values.items()}
+
+
 @app.route('/datasets/get')
 def datasets_api():
     return {'/info': 'returns values for all available datasets',
@@ -36,6 +55,14 @@ def datasets_api():
 @app.route('/datasets/get/info/')
 def datasets_api_info():
     return datasets_info
+
+
+@app.route('/datasets/get/info/values/<string:keys>')
+def datasets_api_info_values(keys):
+    try:
+        return get_values(keys.split(";"))
+    except ValueError:
+        return {'Error': 'No values found for given keys.'}
 
 
 @app.route('/datasets/get/data/<string:name>')
