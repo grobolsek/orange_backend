@@ -10,7 +10,6 @@ CORS(app)
 
 datasets_info: dict = dict(Orange.datasets.items())
 
-
 def convert_data(name: str) -> dict[str: dict]:
     """
     :param name: name of dataset file (.tab)
